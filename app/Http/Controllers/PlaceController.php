@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Places;
 use App\Slots;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class PlaceController extends Controller
 {
@@ -16,6 +17,17 @@ class PlaceController extends Controller
     public function index()
     {
         $places = Places::all();
+
+        foreach ($places as $place){
+            $slots = Slots::all()->where('place_id', '=', $place->id);
+            $count = 0;
+            foreach ($slots as $slot){
+                if($slot->user_id == NULL)
+                    $count++;
+            }
+            $place->avai_slot = $count;
+        }
+
         $active = "Place";
         return view('place.index',compact('active','places'));
     }
@@ -27,8 +39,12 @@ class PlaceController extends Controller
      */
     public function create()
     {
-        $active = "Place";
-        return view('place.create',compact('active'));
+        if(Auth::user()->id == 1){
+            $active = "Place";
+            return view('place.create',compact('active'));
+        }else{
+            return redirect()->route('place.index');
+        }
     }
 
     /**

@@ -22,17 +22,18 @@ class ParkingController extends Controller
     public function index()
     {
         $active = 'Parking';
-//        if(Auth::user()->id == 1){
-//            $slots = Slots::all();
-//        }
-//        else{
-//            $slots = Slots::all()->where('user_id','=',Auth::user()->id);
-//        }
-        $slots = Slots::all()->where('user_id','=',Auth::user()->id);
+        if(Auth::user()->id == 1){
+            $slots = Slots::all()->where('user_id','!=',NULL);
+        }
+        else{
+            $slots = Slots::all()->where('user_id','=',Auth::user()->id);
+        }
 
-        foreach ($slots as $slot)
+        foreach ($slots as $slot){
             $slot['place_id'] = Places::find($slot['place_id']);
-
+            $user = \App\User::find($slot['user_id']);
+            $slot['user_id'] = $user;
+        }
 
         return view('park.index',compact('active','slots'));
     }
@@ -46,7 +47,7 @@ class ParkingController extends Controller
     {
         $active = 'Parking';
         $place = Places::all();
-        $vehicle = Parking::all();
+        $vehicle = Parking::all()->where('user_id','=',Auth::user()->id);
 
         return view('park.create',compact('active','place','vehicle'));
     }

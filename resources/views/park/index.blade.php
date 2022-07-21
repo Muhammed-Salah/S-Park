@@ -34,6 +34,7 @@
                 <thead>
                 <tr>
                     <th>#</th>
+                    @if(Auth::user()->id == 1)<th>User</th>@endif
                     <th>Place</th>
                     <th>Location</th>
                     <th>slot</th>
@@ -45,6 +46,7 @@
                 @foreach($slots as $data)
                     <tr data-item-id="{{$data->id}}">
                         <td> {{$i++}} </td>
+                        @if(Auth::user()->id == 1)<td> {{$data->user_id->name}} </td>@endif
                         <td> {{$data->place_id->Place_name}} </td>
                         <td> {{$data->place_id->location}} </td>
                         <td> {{$data->slot_name}} </td>
